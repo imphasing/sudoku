@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <stdbool.h>
+
 #include "graph.h"
 
 // first 3 3x3 groups, in a row
@@ -60,7 +61,6 @@ void link_three_groups(struct vertex **vertices)
 	}
 }
 
-
 // link rows and columns together
 void link_cols_and_rows(struct vertex **vertices)
 {
@@ -84,8 +84,7 @@ void link_cols_and_rows(struct vertex **vertices)
 				link_vertex_with_group(current_col, 9, j, vertices);
 	}
 }
-
-
+		
 // create graph, load up vertices and link them together in the sudoku pattern
 struct graph *load_initial()
 {
@@ -103,18 +102,54 @@ struct graph *load_initial()
 
 	// set up the graph with the vertices
 	int i = 0;
-	int j = 0;
-	for (i = 0; i < num_boxes; i++)
-		vertices[i] = add_vertex(graph, buffer[i] - '0');
+	for (i = 0; i < num_boxes; i++) { 
+		// add all 9 color possibilities if we get a 0, which is an unfilled cell
+		if (buffer[i] == '0') {
+			vertices[i] = add_multiple_value_vertex(graph, make_colors(9), 9);
+		}
+		else {
+			// add a single possibility if we get a pre-filled cell
+			vertices[i] = add_single_value_vertex(graph, buffer[i] - '0');
+		}
+	}
+
 
 	link_three_groups(vertices);
 	link_cols_and_rows(vertices);
 
 	return graph;
 }
-		
+
 
 int main(int argc, char **argv)
 {
-	print_graph(load_initial(9));
+	struct graph *graph = load_initial();
+
+	/*
+	struct vertex *vertex1 = add_multiple_value_vertex(graph, make_colors(3), 3);
+	struct vertex *vertex2 = add_single_value_vertex(graph, 1);
+	struct vertex *vertex3 = add_multiple_value_vertex(graph, make_colors(3), 3);
+
+	add_edge(vertex1, vertex2);
+	add_edge(vertex1, vertex3);
+
+	add_edge(vertex2, vertex1);
+	add_edge(vertex2, vertex3);
+
+	add_edge(vertex3, vertex1);
+	add_edge(vertex3, vertex2);
+	*/
+
+	print_graph(graph);
+
+	color_graph(graph->vertices);
+
+	if (graph_colored(graph))
+		printf("Graph is colored.\n");
+	else
+		printf("Graph is not colored.\n");
+
+	print_graph(graph);
+	
+	return 0;
 }
