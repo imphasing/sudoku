@@ -54,7 +54,6 @@ int choose_color(struct vertex *vertex)
 	return -1;
 }
 
-
 int *remove_possibility(int *possibilities, int count, int color)
 {
 	int *new_possible = malloc(sizeof(int) * (count - 1));
@@ -77,11 +76,6 @@ bool color_graph(struct vertex *vertex)
 	if (vertex == NULL)
 		return true;
 
-	int original_count = vertex->num_possible;
-
-	if (original_count == 1)
-		return color_graph(vertex->next);
-	
 	while (vertex->num_possible > 1) {
 		int *saved_possible = vertex->possibilities;
 		int saved_num = vertex->num_possible;
@@ -99,8 +93,7 @@ bool color_graph(struct vertex *vertex)
 
 		bool success = color_graph(vertex->next);
 
-		if (success == false)
-		{
+		if (success == false) {
 			int *new_possible = remove_possibility(
 				saved_possible, 
 				saved_num,
@@ -110,10 +103,13 @@ bool color_graph(struct vertex *vertex)
 			vertex->num_possible = saved_num - 1;
 		}
 		else
-			return true;
+			break;
 	}
 
-	return false;
+	if (edges_disallow_color(vertex, vertex->possibilities[0]))
+		return false;
+	else
+		return color_graph(vertex->next);
 }
 
 

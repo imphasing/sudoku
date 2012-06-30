@@ -123,22 +123,33 @@ struct graph *load_initial()
 
 int main(int argc, char **argv)
 {
-	struct graph *graph = load_initial();
+	struct graph *graph = create_graph();
 
-	/*
-	struct vertex *vertex1 = add_multiple_value_vertex(graph, make_colors(3), 3);
-	struct vertex *vertex2 = add_single_value_vertex(graph, 1);
-	struct vertex *vertex3 = add_multiple_value_vertex(graph, make_colors(3), 3);
+	struct vertex *vertex1 = add_multiple_value_vertex(graph, make_colors(4), 4);
+	struct vertex *vertex2 = add_multiple_value_vertex(graph, make_colors(4), 4);
+	struct vertex *vertex3 = add_multiple_value_vertex(graph, make_colors(4), 4);
+	struct vertex *vertex4 = add_multiple_value_vertex(graph, make_colors(4), 4);
+
+	struct vertex *vertex5 = add_multiple_value_vertex(graph, make_colors(4), 4);
 
 	add_edge(vertex1, vertex2);
 	add_edge(vertex1, vertex3);
+	add_edge(vertex1, vertex4);
 
 	add_edge(vertex2, vertex1);
 	add_edge(vertex2, vertex3);
+	add_edge(vertex2, vertex4);
 
 	add_edge(vertex3, vertex1);
 	add_edge(vertex3, vertex2);
-	*/
+	add_edge(vertex3, vertex4);
+
+	add_edge(vertex4, vertex1);
+	add_edge(vertex4, vertex2);
+	add_edge(vertex4, vertex3);
+
+	add_edge(vertex3, vertex5);
+	add_edge(vertex5, vertex3);
 
 	print_graph(graph);
 

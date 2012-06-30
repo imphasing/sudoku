@@ -1,6 +1,6 @@
 
 solver: 
-	cc -Wall solver.c graph.c graph_color.c -o solver
+	cc -g -Wall solver.c graph.c graph_color.c -o solver
 
 all: solver
 	
