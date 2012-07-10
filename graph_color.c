@@ -3,11 +3,22 @@
 #include <stdio.h>
 #include "graph.h"
 
+// check if an array contains a value
+bool array_contains(int *array, int count, int value)
+{
+	int i = 0;
+	for (i = 0; i < count; i++)
+		if (array[i] == value)
+			return true;
+	
+	return false;
+}
+
 
 // determine is a vertex is constrained to only a single given color
 bool vertex_must_be(struct vertex *vertex, int color)
 {
-	if (vertex->num_possible == 1 && vertex->possibilities[0] == color)
+	if (vertex->num_possible == 1 && vertex->current_value == color)
 		return true;
 
 	return false;
@@ -36,80 +47,57 @@ bool edges_disallow_color(struct vertex *vertex, int color)
 }
 
 
-// Pick a color for a vertex to try next
-int choose_color(struct vertex *vertex)
+// See if a color is valid for a cell, not contained in any neighbors and not been removed
+int is_valid_color(struct vertex *vertex, int *removed, int removed_count, int color)
 {
-	if (vertex->num_possible == 1)
-		return 0;
-	else {
-		int chosen_index;
-		for (chosen_index = 0; chosen_index < vertex->num_possible; chosen_index++) {
-			if (edges_disallow_color(vertex, vertex->possibilities[chosen_index]))
-				continue;
-			else
-				return chosen_index;
-		}
-	}
-
-	return -1;
-}
-
-int *remove_possibility(int *possibilities, int count, int color)
-{
-	int *new_possible = malloc(sizeof(int) * (count - 1));
+	if (vertex->num_possible == 1 && vertex->current_value == color)
+		return true;
+	else
+		if (!array_contains(removed, removed_count, color))
+			return !edges_disallow_color(vertex, color);
 	
-	int i, j;
-	for (j = 0, i = 0; i < count; i++) {
-		if (possibilities[i] == color)
-			continue;
-
-		new_possible[j] = possibilities[i];
-		j++;
-	}
-
-	return new_possible;
+	return false;
 }
 
 
-bool color_graph(struct vertex *vertex)
+// Recursive backtracking algorithm
+bool color_graph(struct vertex *vertex, int num_colors)
 {
 	if (vertex == NULL)
 		return true;
 
-	while (vertex->num_possible > 1) {
-		int *saved_possible = vertex->possibilities;
-		int saved_num = vertex->num_possible;
+	int removed_index = 0;
+	int removed_colors[num_colors];
+	
+	int original_value = vertex->current_value;
+	int original_num = vertex->num_possible;
 
-		int next_candidate = choose_color(vertex);
 
-		if (next_candidate == -1)
-			return false;
+	if (original_num == 1)
+		return color_graph(vertex->next, num_colors);	
 
-		int *next_color = malloc(sizeof(int));
-		*next_color = saved_possible[next_candidate];
+	int i = 0;
+	for (i = 1; i <= original_num; i++) {
+		if (!is_valid_color(vertex, removed_colors, removed_index, i))
+			continue;
 
-		vertex->possibilities = next_color;
+		vertex->current_value = i;
 		vertex->num_possible = 1;
 
-		bool success = color_graph(vertex->next);
+		bool success = color_graph(vertex->next, num_colors);
 
 		if (success == false) {
-			int *new_possible = remove_possibility(
-				saved_possible, 
-				saved_num,
-				*next_color);
-
-			vertex->possibilities = new_possible;
-			vertex->num_possible = saved_num - 1;
+			removed_colors[removed_index] = i;
+			removed_index++;
+			vertex->num_possible = original_num;
+			vertex->current_value = original_value;
 		}
-		else
-			break;
+		else {
+			return true;
+		}
 	}
 
-	if (edges_disallow_color(vertex, vertex->possibilities[0]))
-		return false;
-	else
-		return color_graph(vertex->next);
+	return false;
 }
 
 
@@ -126,5 +114,4 @@ bool graph_colored(struct graph *graph)
 
 	return true;
 }
-
 

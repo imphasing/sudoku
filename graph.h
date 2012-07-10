@@ -2,12 +2,13 @@
 
 struct graph {
 	struct vertex *vertices;
-	int vertex_count;
+	int vertex_index;
 };
 
 struct vertex {
-	int *possibilities;
+	int current_value;
 	int num_possible;
+	int index;
 
 	struct edge *edges;
 	struct vertex *next;
@@ -21,11 +22,10 @@ struct edge {
 
 
 struct graph *create_graph();
-struct vertex *add_single_value_vertex(struct graph *graph, int value);
-struct vertex *add_multiple_value_vertex(struct graph *graph, int *possible_values, int count);
+struct vertex *add_vertex(struct graph *graph, int num_possible, int value);
 void add_edge(struct vertex *vertex1, struct vertex *vertex2);
-int *make_colors(int count);
 void print_graph(struct graph *graph);
+void print_sudoku(struct graph *graph, int size);
 
-bool color_graph(struct vertex *vertex);
+bool color_graph(struct vertex *vertex, int num_colors);
 bool graph_colored(struct graph *graph);

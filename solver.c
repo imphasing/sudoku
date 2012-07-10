@@ -105,11 +105,11 @@ struct graph *load_initial()
 	for (i = 0; i < num_boxes; i++) { 
 		// add all 9 color possibilities if we get a 0, which is an unfilled cell
 		if (buffer[i] == '0') {
-			vertices[i] = add_multiple_value_vertex(graph, make_colors(9), 9);
+			vertices[i] = add_vertex(graph, 9, 0);
 		}
 		else {
 			// add a single possibility if we get a pre-filled cell
-			vertices[i] = add_single_value_vertex(graph, buffer[i] - '0');
+			vertices[i] = add_vertex(graph, 1, buffer[i] - '0');
 		}
 	}
 
@@ -123,44 +123,16 @@ struct graph *load_initial()
 
 int main(int argc, char **argv)
 {
-	struct graph *graph = create_graph();
+	struct graph *graph = load_initial();
 
-	struct vertex *vertex1 = add_multiple_value_vertex(graph, make_colors(4), 4);
-	struct vertex *vertex2 = add_multiple_value_vertex(graph, make_colors(4), 4);
-	struct vertex *vertex3 = add_multiple_value_vertex(graph, make_colors(4), 4);
-	struct vertex *vertex4 = add_multiple_value_vertex(graph, make_colors(4), 4);
-
-	struct vertex *vertex5 = add_multiple_value_vertex(graph, make_colors(4), 4);
-
-	add_edge(vertex1, vertex2);
-	add_edge(vertex1, vertex3);
-	add_edge(vertex1, vertex4);
-
-	add_edge(vertex2, vertex1);
-	add_edge(vertex2, vertex3);
-	add_edge(vertex2, vertex4);
-
-	add_edge(vertex3, vertex1);
-	add_edge(vertex3, vertex2);
-	add_edge(vertex3, vertex4);
-
-	add_edge(vertex4, vertex1);
-	add_edge(vertex4, vertex2);
-	add_edge(vertex4, vertex3);
-
-	add_edge(vertex3, vertex5);
-	add_edge(vertex5, vertex3);
-
-	print_graph(graph);
-
-	color_graph(graph->vertices);
+	color_graph(graph->vertices, 9);
 
 	if (graph_colored(graph))
 		printf("Graph is colored.\n");
 	else
 		printf("Graph is not colored.\n");
 
-	print_graph(graph);
+	print_sudoku(graph, 9);
 	
 	return 0;
 }
