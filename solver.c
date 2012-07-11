@@ -23,6 +23,7 @@ bool index_in_group(int *group, int size, int index)
 	return false;
 }
 
+
 // link a vertex at index with every other vertex in the group
 void link_vertex_with_group(int *group, int size, int index, struct vertex **vertices)
 {
@@ -61,6 +62,7 @@ void link_three_groups(struct vertex **vertices)
 	}
 }
 
+
 // link rows and columns together
 void link_cols_and_rows(struct vertex **vertices)
 {
@@ -84,6 +86,7 @@ void link_cols_and_rows(struct vertex **vertices)
 				link_vertex_with_group(current_col, 9, j, vertices);
 	}
 }
+
 		
 // create graph, load up vertices and link them together in the sudoku pattern
 struct graph *load_initial()
@@ -95,7 +98,6 @@ struct graph *load_initial()
 
 	char *buffer = malloc(sizeof(char) * num_chars);
 	fgets(buffer, num_chars, stdin);
-
 
 	struct graph *graph = create_graph();
 	struct vertex **vertices = malloc(sizeof(void *) * num_boxes);
@@ -113,9 +115,11 @@ struct graph *load_initial()
 		}
 	}
 
-
 	link_three_groups(vertices);
 	link_cols_and_rows(vertices);
+
+	free(buffer);
+	free(vertices);
 
 	return graph;
 }
@@ -128,11 +132,11 @@ int main(int argc, char **argv)
 	color_graph(graph->vertices, 9);
 
 	if (graph_colored(graph))
-		printf("Graph is colored.\n");
+		print_sudoku(graph, 9);
 	else
-		printf("Graph is not colored.\n");
+		printf("Unable to color sudoku graph.\n");
 
-	print_sudoku(graph, 9);
+	free_graph(graph);
 	
 	return 0;
 }

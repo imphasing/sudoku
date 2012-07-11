@@ -72,7 +72,6 @@ bool color_graph(struct vertex *vertex, int num_colors)
 	int original_value = vertex->current_value;
 	int original_num = vertex->num_possible;
 
-
 	if (original_num == 1)
 		return color_graph(vertex->next, num_colors);	
 

@@ -5,6 +5,7 @@ struct graph {
 	int vertex_index;
 };
 
+
 struct vertex {
 	int current_value;
 	int num_possible;
@@ -22,8 +23,11 @@ struct edge {
 
 
 struct graph *create_graph();
+void free_graph(struct graph *graph);
+
 struct vertex *add_vertex(struct graph *graph, int num_possible, int value);
 void add_edge(struct vertex *vertex1, struct vertex *vertex2);
+
 void print_graph(struct graph *graph);
 void print_sudoku(struct graph *graph, int size);
 

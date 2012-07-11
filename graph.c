@@ -11,6 +11,30 @@ struct graph *create_graph()
 	return created;
 }
 
+
+void free_graph(struct graph *graph)
+{
+	struct vertex *next_vertex = graph->vertices;
+
+	while (next_vertex != NULL) {
+		struct vertex *current = next_vertex;
+		next_vertex = next_vertex->next;
+
+		struct edge *next_edge = current->edges;
+		while (next_edge != NULL) {
+			struct edge *current_edge = next_edge;
+			next_edge = next_edge->next;
+
+			free(current_edge);
+		}
+
+		free(current);
+	}
+
+	free(graph);
+}
+
+
 struct vertex *add_vertex(struct graph *graph, int num_possible, int value)
 {
 	struct vertex *next = malloc(sizeof(struct vertex));
@@ -24,6 +48,7 @@ struct vertex *add_vertex(struct graph *graph, int num_possible, int value)
 	return next;
 }
 
+
 void add_edge(struct vertex *vertex1, struct vertex *vertex2)
 {
 	struct edge *next = malloc(sizeof(struct edge));
@@ -31,6 +56,7 @@ void add_edge(struct vertex *vertex1, struct vertex *vertex2)
 	next->next = vertex1->edges;
 	vertex1->edges = next;
 }
+
 
 void print_graph(struct graph *graph)
 {
@@ -79,10 +105,7 @@ void print_sudoku(struct graph *graph, int size)
 		printf("%d", output[index]);
 
 	printf("\n");
+
+	free(output);
 }
-
-
-
-	
-	
 
